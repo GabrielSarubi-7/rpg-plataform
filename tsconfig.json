@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "paths": {
+      "@shared/*": ["packages/shared/*"]
+    }
+  }
+}
