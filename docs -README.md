@@ -13,7 +13,6 @@ Clone o projeto:
 
 ```bash
 git clone https://github.com/seu-usuario/rpg-platform.git
-cd rpg-platform
 ```
 
 Instale as dependências:
@@ -22,7 +21,7 @@ Instale as dependências:
 npm install
 ```
 
-##Rodar o projeto
+## Rodar o projeto
 
 ```bash
 npm run dev
