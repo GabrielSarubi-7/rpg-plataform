@@ -9,9 +9,13 @@ import { useTokenDrag } from "./hooks/useTokenDrag";
 import GridHighlight from "./components/GridHighlight";
 import MapBackground from "./components/MapBackground";
 import { useMapStore } from "./store/mapStore";
-import { clamp } from "../../shared/utils/math";
+import { clampTokenToMap } from "@shared/rules/tokenRules";
+import { socket } from "@/core/socket/socket";
+import { useLobbyStore } from "@/features/lobby/store/lobbyStore";
+
 export default function MapCanvas() {
   const tokens = useTokenStore((s) => s.tokens);
+  const addToken = useTokenStore((s) => s.addToken);
   const addTokenAt = useTokenStore((s) => s.addTokenAt);
   const moveToken = useTokenStore((s) => s.moveToken);
 
@@ -19,11 +23,13 @@ export default function MapCanvas() {
 
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
 
-  const input = useMapInput(camera, move, addTokenAt);
-  const tokenDrag = useTokenDrag(camera, moveToken);
-
   const width = useMapStore((s) => s.width);
   const height = useMapStore((s) => s.height);
+
+  const lobbyCode = useLobbyStore((s) => s.lobbyCode);
+
+  const input = useMapInput(camera, move, addTokenAt);
+  const tokenDrag = useTokenDrag(camera, moveToken, width, height);
 
   const handleRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -33,15 +39,25 @@ export default function MapCanvas() {
   };
 
   const handleAddToken = () => {
-    if (!menu) return;
+    if (!menu || !lobbyCode) return;
 
     const worldX = (menu.x - camera.x) / camera.zoom;
     const worldY = (menu.y - camera.y) / camera.zoom;
 
-    const x = clamp(worldX, 0, width - 40);
-    const y = clamp(worldY, 0, height - 40);
+    const position = clampTokenToMap(worldX, worldY, width, height);
 
-    addTokenAt(x, y);
+    const token = {
+      id: crypto.randomUUID(),
+      x: position.x,
+      y: position.y,
+    };
+
+    addToken(token);
+
+    socket.emit("token:add", {
+      roomCode: lobbyCode,
+      token,
+    });
 
     setMenu(null);
   };
@@ -67,7 +83,18 @@ export default function MapCanvas() {
         e.currentTarget.releasePointerCapture(e.pointerId);
 
         input.onMouseUp();
-        tokenDrag.drop();
+
+        const dropped = tokenDrag.drop();
+
+        if (dropped && lobbyCode) {
+          socket.emit("token:move", {
+            roomCode: lobbyCode,
+            tokenId: dropped.tokenId,
+            x: dropped.x,
+            y: dropped.y,
+          });
+        }
+
         tokenDrag.stopDrag();
       }}
       onWheel={(e) => {

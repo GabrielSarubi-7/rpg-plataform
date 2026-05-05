@@ -2,11 +2,18 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
-    "baseUrl": ".",
+    "moduleResolution": "bundler",
+    "strict": true,
     "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+    
+    "baseUrl": ".",
     "paths": {
-      "@shared/*": ["packages/shared/*"]
+      "@/*": ["apps/client/src/*"],
+      "@shared/*": ["shared/*"]
     }
   }
 }

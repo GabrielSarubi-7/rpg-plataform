@@ -1,4 +1,4 @@
-import { clamp } from "@/shared/utils/math";
+import { clamp } from "@shared/utils/math";
 
 export function clampToMap(
   x: number,

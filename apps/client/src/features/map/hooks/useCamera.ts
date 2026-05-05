@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clamp } from "../../../shared/utils/math";
+import { clamp } from "@shared/utils/math";
 export function useCamera() {
   const [camera, setCamera] = useState({
     x: 0,
