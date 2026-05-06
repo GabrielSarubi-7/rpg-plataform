@@ -1,6 +1,17 @@
 import { useTokenStore } from "../store/tokenStore";
 
-export default function Token({ token, onMouseDown }: any) {
+interface Props {
+  token: {
+    id: string;
+    x: number;
+    y: number;
+    image?: string;
+  };
+  size: number;
+  onMouseDown: (e: React.PointerEvent<HTMLDivElement>) => void;
+}
+
+export default function Token({ token, size, onMouseDown }: Props) {
   const selectedId = useTokenStore((s) => s.selectedTokenId);
   const setSelectedToken = useTokenStore((s) => s.setSelectedToken);
 
@@ -13,7 +24,6 @@ export default function Token({ token, onMouseDown }: any) {
         if (e.button !== 0) return;
 
         e.stopPropagation();
-
         setSelectedToken(token.id);
         onMouseDown(e);
       }}
@@ -21,18 +31,21 @@ export default function Token({ token, onMouseDown }: any) {
         position: "absolute",
         left: token.x,
         top: token.y,
-        width: 40,
-        height: 40,
+        width: size,
+        height: size,
+
         cursor: "grab",
         userSelect: "none",
+        touchAction: "none",
 
         backgroundColor: token.image ? "transparent" : "red",
         backgroundImage: token.image ? `url(${token.image})` : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
 
-        border: isSelected ? "2px solid #00ffcc" : "none",
+        border: isSelected ? "2px solid #00ffd0" : "1px solid rgba(0,0,0,0.35)",
         borderRadius: 4,
+        boxSizing: "border-box",
       }}
     />
   );

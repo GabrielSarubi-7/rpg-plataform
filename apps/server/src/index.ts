@@ -12,10 +12,18 @@ import type {
   Player,
 } from "@shared/types/multiplayer";
 
-import type {
-  ChatMessage,
-  SendChatMessagePayload,
-} from "@shared/types/chat";
+import type { ChatMessage, SendChatMessagePayload } from "@shared/types/chat";
+
+import type { DiceRollRequest } from "../../../shared/types/dice";
+import {
+  rollDiceExpression,
+  formatDiceResultText,
+} from "../../../shared/rules/diceRules";
+import type { UpdateMapSettingsPayload } from "@shared/types/multiplayer";
+import {
+  DEFAULT_MAP_SETTINGS,
+  normalizeMapSettings,
+} from "@shared/rules/mapRules";
 
 const PORT = 3001;
 
@@ -69,6 +77,7 @@ io.on("connection", (socket) => {
       code,
       players: [player],
       tokens: {},
+      mapSettings: DEFAULT_MAP_SETTINGS,
     };
 
     chatMessages[code] = [];
@@ -200,7 +209,57 @@ io.on("connection", (socket) => {
 
     io.to(roomCode).emit("chat:message", message);
   });
+  socket.on("dice:roll", (payload: DiceRollRequest) => {
+    const roomCode = payload.roomCode?.trim().toUpperCase();
+    const room = getRoom(roomCode);
 
+    if (!room) return;
+
+    const player = room.players.find((p) => p.id === socket.id);
+
+    try {
+      const result = rollDiceExpression(payload.expression, payload.isGmRoll);
+
+      const playerName = player?.name ?? payload.playerName ?? "Jogador";
+
+      const message: ChatMessage = {
+        id: randomUUID(),
+        roomCode,
+        playerId: socket.id,
+        playerName,
+        text: formatDiceResultText(playerName, result),
+        createdAt: Date.now(),
+        type: "dice",
+        dice: result,
+      };
+
+      if (!chatMessages[roomCode]) {
+        chatMessages[roomCode] = [];
+      }
+
+      chatMessages[roomCode].push(message);
+
+      io.to(roomCode).emit("chat:message", message);
+    } catch (error) {
+      socket.emit("chat:message", {
+        id: randomUUID(),
+        roomCode,
+        playerId: "system",
+        playerName: "Sistema",
+        text: error instanceof Error ? error.message : "Erro ao rolar dado.",
+        createdAt: Date.now(),
+        type: "text",
+      });
+    }
+  });
+  socket.on("map:settings:update", (payload: UpdateMapSettingsPayload) => {
+    const room = getRoom(payload.roomCode);
+    if (!room) return;
+
+    room.mapSettings = normalizeMapSettings(payload.settings);
+
+    io.to(payload.roomCode).emit("room:state", room);
+  });
   socket.on("disconnect", () => {
     for (const room of Object.values(rooms)) {
       const wasInRoom = room.players.some((p) => p.id === socket.id);

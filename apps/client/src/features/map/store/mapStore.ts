@@ -1,19 +1,36 @@
 import { create } from "zustand";
+import type { MapSettings } from "@shared/types/map";
+import {
+  DEFAULT_MAP_SETTINGS,
+  getMapPixelSize,
+  normalizeMapSettings,
+} from "@shared/rules/mapRules";
 
-interface MapState {
+interface MapStore extends MapSettings {
   width: number;
   height: number;
-  background?: string;
 
-  setSize: (w: number, h: number) => void;
-  setBackground: (url: string) => void;
+  setMapSettings: (settings: Partial<MapSettings>) => void;
 }
 
-export const useMapStore = create<MapState>((set) => ({
-  width: 2000,
-  height: 1500,
-  background: "/mapa.jpg",
+function buildMapState(settings: MapSettings) {
+  const size = getMapPixelSize(settings);
 
-  setSize: (width, height) => set({ width, height }),
-  setBackground: (background) => set({ background }),
+  return {
+    ...settings,
+    width: size.width,
+    height: size.height,
+  };
+}
+
+export const useMapStore = create<MapStore>((set) => ({
+  ...buildMapState(DEFAULT_MAP_SETTINGS),
+
+  setMapSettings: (settings) => {
+    const normalized = normalizeMapSettings(settings);
+
+    set({
+      ...buildMapState(normalized),
+    });
+  },
 }));

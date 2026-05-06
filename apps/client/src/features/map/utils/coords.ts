@@ -1,10 +1,16 @@
+export interface Camera {
+  x: number;
+  y: number;
+  zoom: number;
+}
+
 export function screenToWorld(
-  x: number,
-  y: number,
-  camera: { x: number; y: number; zoom: number }
+  screenX: number,
+  screenY: number,
+  camera: Camera,
 ) {
   return {
-    x: (x - camera.x) / camera.zoom,
-    y: (y - camera.y) / camera.zoom,
+    x: (screenX - camera.x) / camera.zoom,
+    y: (screenY - camera.y) / camera.zoom,
   };
 }

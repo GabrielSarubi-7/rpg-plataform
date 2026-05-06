@@ -1,3 +1,5 @@
+import type { DiceRollResult } from "./dice";
+
 export interface ChatMessage {
   id: string;
   roomCode: string;
@@ -5,6 +7,9 @@ export interface ChatMessage {
   playerName: string;
   text: string;
   createdAt: number;
+
+  type?: "text" | "dice";
+  dice?: DiceRollResult;
 }
 
 export interface SendChatMessagePayload {

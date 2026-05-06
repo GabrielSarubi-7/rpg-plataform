@@ -1,0 +1,82 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #f4f4f4;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.numberInput {
+  width: 90px;
+}
+
+.muted {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.separator {
+  color: #777;
+}
+
+.resultCard {
+  font-size: 14px;
+  color: #ccc;
+}
+
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.previewImage {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #222;
+}
+
+.imageInfo {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.fitCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #dbe7ff;
+  border-color: #3f4f72;
+  background: #151b2a;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+}

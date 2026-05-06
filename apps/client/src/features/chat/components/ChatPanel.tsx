@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { socket } from "@/core/socket/socket";
+
 import { useChatStore } from "../store/chatStore";
 import { useLobbyStore } from "@/features/lobby/store/lobbyStore";
+import { emitChatMessage } from "../services/chatSocketService";
+
+import ChatMessageItem from "./ChatMessageItem";
 
 export default function ChatPanel() {
   const [text, setText] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const messages = useChatStore((s) => s.messages);
-  const isCollapsed = useChatStore((s) => s.isCollapsed);
-  const toggleCollapsed = useChatStore((s) => s.toggleCollapsed);
 
   const lobbyCode = useLobbyStore((s) => s.lobbyCode);
   const playerName = useLobbyStore((s) => s.playerName);
@@ -24,52 +25,33 @@ export default function ChatPanel() {
 
     if (!value || !lobbyCode) return;
 
-    socket.emit("chat:send", {
-      roomCode: lobbyCode,
-      playerName,
-      text: value,
-    });
-
+    emitChatMessage(lobbyCode, playerName, value);
     setText("");
   };
 
-  if (isCollapsed) {
-    return (
-      <button
-        onClick={toggleCollapsed}
-        style={{
-          position: "absolute",
-          right: 12,
-          top: 12,
-          zIndex: 20,
-          padding: "10px 12px",
-          background: "#222",
-          color: "white",
-          border: "1px solid #555",
-          borderRadius: 8,
-          cursor: "pointer",
-        }}
-      >
-        Chat
-      </button>
-    );
-  }
-
   return (
     <aside
+      data-ui-layer="true"
+      onPointerDown={(e) => e.stopPropagation()}
+      onPointerMove={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      onWheel={(e) => e.stopPropagation()}
+      onContextMenu={(e) => e.stopPropagation()}
       style={{
         position: "absolute",
         right: 0,
         top: 0,
         width: 320,
-        height: "100vh",
+        height: "100dvh",
         background: "#181818",
         color: "white",
         borderLeft: "1px solid #333",
-        zIndex: 20,
+        zIndex: 30,
         display: "flex",
         flexDirection: "column",
         fontFamily: "sans-serif",
+        overflow: "hidden",
       }}
     >
       <header
@@ -81,17 +63,7 @@ export default function ChatPanel() {
           gap: 8,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <strong>Chat</strong>
-
-          <button onClick={toggleCollapsed}>Recolher</button>
-        </div>
+        <strong>Chat</strong>
 
         <div style={{ fontSize: 13, color: "#bbb" }}>
           Sala: <strong>{lobbyCode}</strong>
@@ -103,32 +75,20 @@ export default function ChatPanel() {
       </header>
 
       <div
+        className="game-scrollbar"
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: "auto",
+          overflowX: "hidden",
           padding: 12,
           display: "flex",
           flexDirection: "column",
           gap: 10,
         }}
       >
-        {messages.map((msg) => (
-          <div key={msg.id}>
-            <div style={{ fontSize: 12, color: "#aaa" }}>
-              {msg.playerName}
-            </div>
-
-            <div
-              style={{
-                background: "#242424",
-                padding: 8,
-                borderRadius: 8,
-                wordBreak: "break-word",
-              }}
-            >
-              {msg.text}
-            </div>
-          </div>
+        {messages.map((message) => (
+          <ChatMessageItem key={message.id} message={message} />
         ))}
 
         <div ref={bottomRef} />
@@ -150,17 +110,15 @@ export default function ChatPanel() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enviar mensagem..."
+          className="game-input"
           style={{
             flex: 1,
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #444",
-            background: "#242424",
-            color: "white",
           }}
         />
 
-        <button type="submit">Enviar</button>
+        <button type="submit" className="game-button game-button-primary">
+          Enviar
+        </button>
       </form>
     </aside>
   );

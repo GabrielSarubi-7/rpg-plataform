@@ -1,15 +1,19 @@
 import { create } from "zustand";
-import type { Token } from "@shared/types/token";
+
+export interface Token {
+  id: string;
+  x: number;
+  y: number;
+  image?: string;
+}
 
 interface TokenStore {
   tokens: Record<string, Token>;
   selectedTokenId: string | null;
 
   setTokens: (tokens: Record<string, Token>) => void;
-
   addToken: (token: Token) => void;
   addTokenAt: (x: number, y: number) => void;
-
   moveToken: (id: string, x: number, y: number) => void;
 
   setSelectedToken: (id: string | null) => void;
@@ -43,22 +47,16 @@ export const useTokenStore = create<TokenStore>((set) => ({
     }),
 
   moveToken: (id, x, y) =>
-    set((state) => {
-      const token = state.tokens[id];
-
-      if (!token) return state;
-
-      return {
-        tokens: {
-          ...state.tokens,
-          [id]: {
-            ...token,
-            x,
-            y,
-          },
+    set((state) => ({
+      tokens: {
+        ...state.tokens,
+        [id]: {
+          ...state.tokens[id],
+          x,
+          y,
         },
-      };
-    }),
+      },
+    })),
 
   setSelectedToken: (id) =>
     set({
@@ -66,19 +64,13 @@ export const useTokenStore = create<TokenStore>((set) => ({
     }),
 
   updateTokenImage: (id, image) =>
-    set((state) => {
-      const token = state.tokens[id];
-
-      if (!token) return state;
-
-      return {
-        tokens: {
-          ...state.tokens,
-          [id]: {
-            ...token,
-            image,
-          },
+    set((state) => ({
+      tokens: {
+        ...state.tokens,
+        [id]: {
+          ...state.tokens[id],
+          image,
         },
-      };
-    }),
+      },
+    })),
 }));

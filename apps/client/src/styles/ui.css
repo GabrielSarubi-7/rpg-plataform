@@ -1,0 +1,69 @@
+.game-icon-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  background: #181818;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+}
+
+.game-icon-button:hover {
+  background: #232323;
+  border-color: #666;
+}
+
+.game-panel {
+  background: #111;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  font-family: sans-serif;
+}
+
+.game-input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1d1d1d;
+  color: white;
+  outline: none;
+}
+
+.game-input:focus {
+  border-color: #5d7cff;
+  box-shadow: 0 0 0 2px rgba(93, 124, 255, 0.2);
+}
+
+.game-button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1e1e1e;
+  color: white;
+  cursor: pointer;
+}
+
+.game-button:hover {
+  background: #292929;
+}
+
+.game-button-primary {
+  background: #2d5cdd;
+  border-color: #466ee0;
+}
+
+.game-button-primary:hover {
+  background: #3d6cff;
+}
+
+.game-card {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #171717;
+}

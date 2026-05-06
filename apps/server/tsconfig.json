@@ -12,5 +12,5 @@
   "include": [
     "src",
     "../../shared"
-  ]
+, "../client/src/features/ui/FloatingPanel.tsx", "../client/src/shared/components/ui/Button.tsx", "../client/src/shared/components/ui/Field.tsx", "../client/src/shared/components/ui/IconButton.tsx", "../client/src/shared/components/ui/NumberInput.tsx", "../client/src/shared/components/ui/TextInput.tsx"  ]
 }

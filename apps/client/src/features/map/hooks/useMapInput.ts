@@ -1,40 +1,56 @@
 import { useRef } from "react";
-import { screenToWorld } from "../utils/coords";
 
-export function useMapInput(camera: any, moveCamera: any, onAddToken: any) {
-  const dragging = useRef(false);
-  const last = useRef({ x: 0, y: 0 });
+interface Camera {
+  x: number;
+  y: number;
+  zoom: number;
+}
 
-  const onMouseDown = (e: React.MouseEvent) => {
+type MoveCamera = (dx: number, dy: number) => void;
+
+export function useMapInput(
+  _camera: Camera,
+  move: MoveCamera,
+  _addTokenAt: (x: number, y: number) => void,
+) {
+  const isPanning = useRef(false);
+  const lastMouse = useRef({
+    x: 0,
+    y: 0,
+  });
+
+  const onMouseDown = (e: React.PointerEvent | React.MouseEvent) => {
     if (e.button !== 0) return;
 
-    dragging.current = true;
-    last.current = { x: e.clientX, y: e.clientY };
+    isPanning.current = true;
+
+    lastMouse.current = {
+      x: e.clientX,
+      y: e.clientY,
+    };
   };
 
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!dragging.current) return;
+  const onMouseMove = (e: React.PointerEvent | React.MouseEvent) => {
+    if (!isPanning.current) return;
 
-    const dx = e.clientX - last.current.x;
-    const dy = e.clientY - last.current.y;
+    const dx = e.clientX - lastMouse.current.x;
+    const dy = e.clientY - lastMouse.current.y;
 
-    last.current = { x: e.clientX, y: e.clientY };
+    lastMouse.current = {
+      x: e.clientX,
+      y: e.clientY,
+    };
 
-    moveCamera(dx, dy);
+    move(dx, dy);
   };
 
   const onMouseUp = () => {
-    dragging.current = false;
+    isPanning.current = false;
   };
 
-  const onWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-  };
+  const onWheel = () => {};
 
-  const handleAddToken = (screenX: number, screenY: number) => {
-    const world = screenToWorld(screenX, screenY, camera);
-    onAddToken(world.x, world.y);
-  };
+  const handleAddToken = () => {};
 
   return {
     onMouseDown,

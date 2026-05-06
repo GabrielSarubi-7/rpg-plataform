@@ -1,4 +1,5 @@
 import type { Token } from "./token";
+import type { MapSettings } from "./map";
 
 export interface Player {
   id: string;
@@ -9,6 +10,7 @@ export interface RoomState {
   code: string;
   players: Player[];
   tokens: Record<string, Token>;
+  mapSettings: MapSettings;
 }
 
 export interface CreateRoomPayload {
@@ -36,4 +38,9 @@ export interface UpdateTokenImagePayload {
   roomCode: string;
   tokenId: string;
   image: string;
+}
+
+export interface UpdateMapSettingsPayload {
+  roomCode: string;
+  settings: MapSettings;
 }

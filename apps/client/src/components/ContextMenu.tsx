@@ -13,10 +13,17 @@ export default function ContextMenu({ x, y, onAddToken }: Props) {
 
   return (
     <div
+      data-ui-layer="true"
       onPointerDown={(e) => e.stopPropagation()}
+      onPointerMove={(e) => e.stopPropagation()}
+      onPointerUp={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      onWheel={(e) => e.stopPropagation()}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
       style={{
-        userSelect: "none",
-        WebkitUserSelect: "none",
         position: "fixed",
         top: y,
         left: x,
@@ -27,6 +34,7 @@ export default function ContextMenu({ x, y, onAddToken }: Props) {
         flexDirection: "column",
         gap: 8,
         zIndex: 999,
+        userSelect: "none",
       }}
     >
       <button

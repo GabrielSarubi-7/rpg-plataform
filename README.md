@@ -6,7 +6,7 @@ Projeto de uma plataforma de RPG estilo tabletop (inspirado em Roll20).
 * React + Vite
 * TypeScript
 * Zustand
-
+* Socket.IO
 ## Instalação
 
 Clone o projeto:
